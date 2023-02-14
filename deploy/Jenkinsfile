@@ -1,10 +1,11 @@
 pipeline {
   agent any
-  tools{
+  tools {
     maven "M3"
     jdk "JDK11"
   }
-   environment {
+  
+  environment {
     AWS_CREDENTIAL_NAME = "awsEcrCredential"
     AWS_ACCOUNT_ID = "257307634175"
     REGION = "ap-northeast-2"
@@ -13,30 +14,30 @@ pipeline {
     ECR_REPOSITORY = "${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-2.amazonaws.com"
     ECR_DOCKER_IMAGE = "${ECR_REPOSITORY}/${DOCKER_IMAGE_NAME}"
     ECR_DOCKER_TAG = "${DOCKER_TAG}"
-    }
+  }
+  
   stages {
     stage('Git fetch') {
       steps {
         echo 'Git fetch'
-        git url: 'https://github.com/ctk-001/spring-petclinic.git/',
-          branch: 'main', credentialsId: 'gitCredential' 
+        git url: 'https://github.com/ctk-001/spring-petclinic/',
+          branch: 'main', credentialsId: 'gitCredential'
       }
-     }
+    }
     stage('Maven Build') {
       steps {
         echo 'Maven Build'
         sh 'mvn -Dmaven.test.failure.ignore=true clean package'
       }
-     }
-     
+    }    
     stage('Docker Image') {
       steps {
         echo 'Docker Image'
-        dir("${env.WORKSPACE}"){
-          sh 'docker build -t ${ECR_DOCKER_IMAGE]:${ECR_DOCKER_TAG} .'
+        dir("${env.WORKSPACE}") {
+          sh 'docker build -t ${ECR_DOCKER_IMAGE}:${ECR_DOCKER_TAG} .'
         }
       }
-     }
+    }
     stage('Image Push') {
       steps {
         echo 'Image Push'
@@ -47,13 +48,13 @@ pipeline {
           docker.withRegistry("https://${ECR_REPOSITORY}", "ecr:${REGION}:${AWS_CREDENTIAL_NAME}") {
             docker.image("${ECR_DOCKER_IMAGE}:${ECR_DOCKER_TAG}").push()
           }
+        }
       }
     }
-   }
-     stage('Codedeploy Workload') {
+    stage('Codedeploy Workload') {
       steps {
         echo 'Codedeploy Workload'
       }
-     }
-   }
+    }
+  }
 }
