@@ -65,7 +65,7 @@ pipeline {
           // cleanup current user docker credentials
           sh 'rm -f ~/.dockercfg ~/.docker/config.json || true'                    
                    
-          docker.withRegistry("https://${ECR_REPOSITORY}", "ecr:${REGION}:${AWS_CREDENTIAL_NAME}") {
+          docker.withRegistry("https://257307634175.dkr.ecr.ap-northeast-2.amazonaws.com/project01-spring-petclinic", "ecr:${REGION}:${AWS_CREDENTIAL_NAME}") {
             docker.image("${ECR_DOCKER_IMAGE}:${ECR_DOCKER_TAG}").push()
           }
         }
