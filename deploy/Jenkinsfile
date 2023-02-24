@@ -95,7 +95,7 @@ pipeline {
                     --auto-scaling-groups project01-auto-scaling \
                     --deployment-group-name project01-code-deploy \
                     --deployment-config-name CodeDeployDefault.OneAtATime \
-                    --service-role-arn arn:aws:iam::257307634175:role/project01-code-deploy-service-role
+                    --service-role-arn arn:aws:iam::257307634175:role/project01-service-code-deploy-role
                     '''
                 echo "Codedeploy Workload"   
                 sh '''
