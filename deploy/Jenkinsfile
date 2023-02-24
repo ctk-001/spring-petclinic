@@ -94,7 +94,7 @@ pipeline {
                 --application-name project01 \
                 --deployment-group-name project01-codedeploy \
                 --region ap-northeast-2 \
-                --s3-location bucket=project01-tfbackend-s3,bundleType=zip,key=deploy-1.0.zip \
+                --s3-location bucket=project01-codedeploy-s3,bundleType=zip,key=deploy-1.0.zip \
                 --file-exists-behavior OVERWRITE \
                 --output json > DEPLOYMENT_ID.json
                 '''
