@@ -90,8 +90,11 @@ stage('CodeDeploy Workload') {
                 sh '''
                 aws deploy create-deployment \
                 --application-name project01 \
+                --auto-scaling-groups project01-auto-scaling \
                 --deployment-group-name project01-codedeploy \
+                --deployment-config-name CodeDeployDefault.OneAtATime \
                 --region ap-northeast-2 \
+                --service-role-arn arn:aws:iam::257307634175:role/project01-service-code-deploy-role\
                 --s3-location bucket=project01-codedeploy-s3,bundleType=zip,key=deploy-1.0.zip \
                 --file-exists-behavior OVERWRITE \
                 --output json > DEPLOYMENT_ID.json
