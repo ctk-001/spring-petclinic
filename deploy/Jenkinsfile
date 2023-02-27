@@ -86,7 +86,7 @@ stage('Codedeploy Workload') {
                
            steps {
                 echo "create application"
-                sh 'aws deploy create-application --application-name project01'
+                //sh 'aws deploy create-application --application-name project01'
                
                 echo "create Codedeploy group"   
                 sh '''
