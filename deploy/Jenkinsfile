@@ -102,7 +102,7 @@ stage('CodeDeploy Workload') {
                 echo "Codedeploy Workload"   
                 sh '''
                     aws deploy create-deployment --application-name project01 \
-                    --deployment-group-name project02-deploy \
+                    --deployment-group-name project01-deploy \
                     --s3-location bucket=project01-codedeploy-s3,bundleType=zip,key=deploy-1.0.zip
                     '''
                 
