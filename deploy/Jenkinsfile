@@ -83,42 +83,28 @@ pipeline {
         }
 
 
-    stage('CodeDeploy Workload') {
-        agent any // agent any?
-         steps {
-            echo 'Run CodeDeploy with creating deployment'
-            script {
+       stage('Codedeploy Workload') {
+               
+           steps {
+                echo "create application"
+                sh 'aws deploy create-application --application-name project01'
+               
+                echo "create Codedeploy group"   
                 sh '''
-                aws deploy create-deployment \
-                --application-name project01 \
-                --deployment-group-name project01-codedeploy \
-                --region ap-northeast-2 \
-                --s3-location bucket=project01-codedeploy-s3,bundleType=zip,key=deploy-1.0.zip \
-                --file-exists-behavior OVERWRITE \
-                --output json > DEPLOYMENT_ID.json
-                '''
-                
-                def DEPLOYMENT_ID = sh(script: "cat DEPLOYMENT_ID.json | grep -o '\"deploymentId\": \"[^\"]*' | cut -d'\"' -f4", returnStdout: true).trim()
-                echo "$DEPLOYMENT_ID"
-                sh "rm -rf ./DEPLOYMENT_ID.json"
-                def DEPLOYMENT_RESULT = ""
-                while("$DEPLOYMENT_RESULT" != "\"Succeeded\"") {
-                    DEPLOYMENT_RESULT = sh(
-                        script:"aws deploy get-deployment \
-                                    --region ${REGION} \
-                                    --query \"deploymentInfo.status\" \
-                                    --deployment-id ${DEPLOYMENT_ID}",
-                        returnStdout: true
-                    ).trim()
-                    echo "$DEPLOYMENT_RESULT"
-                    if ("$DEPLOYMENT_RESULT" == "\"Failed\"") {
-                        currentBuild.result = 'FAILURE'
-                        break 
-                        }
-                    sleep(10) // sleep 10s
-                    }
-                currentBuild.result = 'SUCCESS'
-                }
+                    aws deploy create-deployment-group \
+                    --application-name project01 \
+                    --auto-scaling-groups project01-autoscaling-group \
+                    --deployment-group-name project01-deploy \
+                    --deployment-config-name CodeDeployDefault.OneAtATime \
+                    --service-role-arn arn:aws:iam::257307634175:role/project04-service-code-deploy-role
+                    '''
+                echo "Codedeploy Workload"   
+                sh '''
+                    aws deploy create-deployment --application-name project04 \
+                    --deployment-config-name CodeDeployDefault.OneAtATime \
+                    --deployment-group-name project04-deploy \
+                    --s3-location bucket=project04-codedeploy,bundleType=zip,key=deploy-1.0.zip
+                    '''
             }
         }
     }
