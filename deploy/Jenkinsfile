@@ -93,7 +93,7 @@ stage('Codedeploy Workload') {
                     aws deploy create-deployment-group \
                     --application-name project01 \
                     --auto-scaling-groups project01-auto-scaling \
-                    --deployment-group-name project01-deploy \
+                    // --deployment-group-name project01-deploy \
                     --deployment-config-name CodeDeployDefault.OneAtATime \
                     --service-role-arn arn:aws:iam::257307634175:role/project01-service-code-deploy-role
                     '''
