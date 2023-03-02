@@ -88,25 +88,23 @@ stage('CodeDeploy Workload') {
                 sh 'aws deploy create-application --application-name project01'
           
                 echo "create Codedeploy group"   
-                sh '''
+               sh '''
                     aws deploy create-deployment-group \
                     --application-name project01 \
                     --auto-scaling-groups project01-auto-scaling \
                     --deployment-group-name project01-deploy \
                     --deployment-config-name CodeDeployDefault.OneAtATime \
                     --service-role-arn arn:aws:iam::257307634175:role/project01-service-code-deploy-role
-                    ''' 
+                    '''
 						echo 'Run CodeDeploy with creating deployment'
             script {
+                echo "Codedeploy Workload"   
                 sh '''
-                aws deploy create-deployment \
-                --application-name project01 \
-                --deployment-group-name project01-codedeploy \
-                --region ap-northeast-2 \
-                --s3-location bucket=project01-codedeploy-s3,bundleType=zip,key=deploy-1.0.zip \
-                --file-exists-behavior OVERWRITE \
-                --output json > DEPLOYMENT_ID.json
-                '''
+                    aws deploy create-deployment --application-name project01 \
+                    --deployment-config-name CodeDeployDefault.OneAtATime \
+                    --deployment-group-name project01-deploy \
+                    --s3-location bucket=project01-codedeploy-s3,bundleType=zip,key=deploy-1.0.zip
+                    '''
                 
                 def DEPLOYMENT_ID = sh(script: "cat DEPLOYMENT_ID.json | grep -o '\"deploymentId\": \"[^\"]*' | cut -d'\"' -f4", returnStdout: true).trim()
                 echo "$DEPLOYMENT_ID"
