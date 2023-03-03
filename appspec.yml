@@ -12,7 +12,8 @@ permission:
     group: ubuntu
 hooks:
   BeforeInstall:
-    - 
+    - location: deploy/scripts/kill.sh
+      timeout: 100
   ApplicationStop:
     - location: deploy/scripts/kill_process.sh
       timeout: 100
